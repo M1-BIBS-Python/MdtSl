@@ -7,9 +7,7 @@ def PDBparser(pdbFile):
     :param pdbFile: Fichier pdb (format ATOM) contenant les coordonnees des atomes d'une proteine.
     :return: Un dictionnaire utilisable par Python.
     """
-    #~ infile = open(pdbFile, "r")
-    #~ lines = infile.readlines
-    
+
     with open(pdbFile) as f:
 	    molecule = {}  # dictionnaire le plus externe
 	    chainList = []
@@ -74,7 +72,7 @@ def PDBparserConf(list):
                 cptAlt = True
 
             if line[16] == alt:
-                chaine = line[72:76]
+                chaine = line[72:76].strip()
                 
                 if chaine not in ["BWAT", "POT", "CL"]:
 
@@ -110,7 +108,7 @@ def PDBparserConf(list):
 
 def PDBparserMulti(pdbFile):
     """
-    Parse un fichier pdb au format ATOM te contenant plusieurs proteines en un dictionnaire. 
+    Parse un fichier pdb au format ATOM contenant plusieurs proteines en un dictionnaire. 
     :param pdbFile: Fichier pbd (format ATOM) contenant plusieurs proteines.
     :return: Un dictionnaire utilisable par Python.
     """

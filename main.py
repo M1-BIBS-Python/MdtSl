@@ -11,7 +11,6 @@ from computeInterface import *
 # ----------------------------------------
 
 ref = PDBparser("pab21_structure_de_ref.pdb")
-#writePDBparsed(ref, "ref.txt")
 
 
 # ------------------------------
@@ -19,7 +18,6 @@ ref = PDBparser("pab21_structure_de_ref.pdb")
 # ------------------------------
 
 frames = PDBparserMulti("pab21_prod_solute_500frames.pdb")
-#writePDBparsed(frames, "frames.txt")
 
 
 # --------------------------------------------------------------------------------------------
@@ -73,11 +71,35 @@ plt.show()
 
 # ---------------------------------------------------------------------------
 
-# ---------------------------------------------------------------------------
-# Calcul de la matrice des distances entre chaque domaine proteique et l'ARN
-# ---------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------
+# Calcul de la matrice des distances entre chaque domaine proteique et l'ARN pour la structure de reference
+# ----------------------------------------------------------------------------------------------------------
 
-distMatrix(ref, 'A1', 'B', "CM", heatmap="yes")
-distMatrix(ref, 'A2', 'B', "CM", heatmap="yes")
-distMatrix(ref, 'A3', 'B', "CM", heatmap="yes")
-distMatrix(ref, 'A4', 'B', "CM", heatmap="yes")
+#distMatrix(ref, 'A1', 'B', "atom", heatmap="yes")
+#distMatrix(ref, 'A2', 'B', "atom", heatmap="yes")
+#distMatrix(ref, 'A3', 'B', "atom", heatmap="yes")
+#distMatrix(ref, 'A4', 'B', "atom", heatmap="yes")
+
+# -------------------------------------------------------------------------------------------------
+# Calcul de la frequence d'appartenance a l'interface avec l'ARN pour chaque residu de la proteine
+# -------------------------------------------------------------------------------------------------
+"""
+freq_interface = resInterface(frames, ['A1', 'A2', 'A3', 'A4'], 'B', 9, "CM")
+for dom in freq_interface.keys():
+    print(str(dom) + "\n")
+    for res in freq_interface[dom].keys():
+        print(res + " : " + str(freq_interface[dom][res]) + "\n")
+"""
+# ------------------------------------------------------------------------------------
+# Calcul des temps de contact entre paires de residus choisis a partir de la Figure 2
+# ------------------------------------------------------------------------------------
+
+pairs = {'41': {'dom':'A4', 'nucl':'32', 'rna':'B'},
+         '100':{'dom':'A4', 'nucl':'31', 'rna':'B'},
+         '46': {'dom':'A4', 'nucl':'25', 'rna':'B'},
+         '34': {'dom':'A3', 'nucl':'33', 'rna':'B'}}
+"""
+contacts = contactTime(pairs, frames, 7, 10, "CM")
+for res in contacts.keys():
+    print("Residue " + res + " - " + "Nucleotide " + contacts[res]['nucl'] + " : " + str(contacts[res]['contact time']) + " ns\n")
+"""

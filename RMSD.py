@@ -23,12 +23,11 @@ def centerOfMass(dico):
     z = 0
     nbAtomes = 0
     CM_res = {}
-    for atom in dico.keys():
-        if atom != 'resname' and atom != 'atomlist':
-            x += dico[atom]['x']
-            y += dico[atom]['y']
-            z += dico[atom]['z']
-            nbAtomes += 1
+    for atom in dico['atomlist']:
+        x += dico[atom]['x']
+        y += dico[atom]['y']
+        z += dico[atom]['z']
+        nbAtomes += 1
     CM_res['x'] = x / nbAtomes
     CM_res['y'] = y / nbAtomes
     CM_res['z'] = z / nbAtomes
@@ -42,26 +41,25 @@ def RMSD_prot(dico1, dico2, mode):
     :param dico1: Dictionnaire contenant les donnees parsees depuis le fichier pdb de la premiere proteine.
     :param dico2: Dictionnaire contenant les donnees parsees depuis le fichier pdb de la seconde proteine.
     :param mode: Mode de calcul du rmsd (par rapport aux carbones alphe, 'CA', ou au centre de masse de la molecule, 'CM').
-    :return: La valeur du rmsd (reel).
+    :return: La valeur du rmsd entre les 2 structures.
     """
 
     nb_pairs = 0
     somme = 0
     for chain in dico1.keys():
-        for res in dico1[chain].keys():
-            if res != 'reslist':
-                if mode == 'CA':
-                    for atom in dico1[chain][res].keys():
-                        if atom == mode:
-                            d = distanceCarree(dico1[chain][res][atom], dico2[chain][res][atom])
-                            somme += d
-                            nb_pairs += 1
-                elif mode == 'CM':
-                    CM_res1 = centerOfMass(dico1[chain][res])
-                    CM_res2 = centerOfMass(dico2[chain][res])
-                    d = distanceCarree(CM_res1, CM_res2)
-                    somme += d
-                    nb_pairs += 1
+        for res in dico1[chain]['reslist']:					# pour chaque residu de la proteine
+            if mode == 'CA':								# calcul du rmsd par rapport au carbone alpha du residu
+                for atom in dico1[chain][res].keys():
+                    if atom == mode:
+                        d = distanceCarree(dico1[chain][res][atom], dico2[chain][res][atom])
+                        somme += d
+                        nb_pairs += 1
+            elif mode == 'CM':								# calcul du rmsd par rapport au centre de masse du residu
+                CM_res1 = centerOfMass(dico1[chain][res])	# calcul des coordonnes du centre de masse du residu de la premiere structure
+                CM_res2 = centerOfMass(dico2[chain][res])	# idem pour le residu correspondant dans la seconde structure
+                d = distanceCarree(CM_res1, CM_res2)
+                somme += d
+                nb_pairs += 1
 
     rmsd = sqrt(somme / nb_pairs)
     return rmsd
@@ -74,24 +72,23 @@ def RMSD_domain(dico1, dico2, mode):
     :param dico1: Dictionnaire contenant les donnees parsees pour le domaine de la proteine 1.
     :param dico2: Dictionnaire contenant les donnees parsees pour le domaine de la proteine 2.
     :param calc_atom: Nom des atomes a partir desquels le RMSD sera calcule.
-    :return: La valeur du rmsd (reel).
+    :return: La valeur du rmsd entre les 2 domaines.
     """
     nb_pairs = 0
     somme = 0
-    for res in dico1.keys():
-        if res != 'reslist':
-            if mode == 'CA':
-                for atom in dico1[res].keys():
-                    if atom == mode:
-                        d = distanceCarree(dico1[res][atom], dico2[res][atom])
-                        somme += d
-                        nb_pairs += 1
-            elif mode == 'CM':
-                CM_res1 = centerOfMass(dico1[res])
-                CM_res2 = centerOfMass(dico2[res])
-                d = distanceCarree(CM_res1, CM_res2)
-                somme += d
-                nb_pairs += 1
+    for res in dico1['reslist']:
+        if mode == 'CA':
+            for atom in dico1[res]['atomlist']:
+                if atom == mode:
+                    d = distanceCarree(dico1[res][atom], dico2[res][atom])
+                    somme += d
+                    nb_pairs += 1
+        elif mode == 'CM':
+            CM_res1 = centerOfMass(dico1[res])
+            CM_res2 = centerOfMass(dico2[res])
+            d = distanceCarree(CM_res1, CM_res2)
+            somme += d
+            nb_pairs += 1
     rmsd = sqrt(somme / nb_pairs)
     return rmsd
 

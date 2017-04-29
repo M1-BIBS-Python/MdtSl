@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding : utf8 -*-
 
+import numpy as np
+import matplotlib.pyplot as plt
 from math import sqrt
 
 def distanceCarree(p1, p2):
@@ -33,6 +35,7 @@ def centerOfMass(dico):
     CM_res['z'] = z / nbAtomes
 
     return CM_res
+
 
 #-------------------------------------------
 def RMSD_prot(dico1, dico2, mode):
@@ -71,7 +74,7 @@ def RMSD_domain(dico1, dico2, mode):
     Calcule le RMSD entre 2 domaines de proteine.
     :param dico1: Dictionnaire contenant les donnees parsees pour le domaine de la proteine 1.
     :param dico2: Dictionnaire contenant les donnees parsees pour le domaine de la proteine 2.
-    :param calc_atom: Nom des atomes a partir desquels le RMSD sera calcule.
+    :param mode: Nom des atomes a partir desquels le RMSD sera calcule.
     :return: La valeur du rmsd entre les 2 domaines.
     """
     nb_pairs = 0
@@ -92,3 +95,58 @@ def RMSD_domain(dico1, dico2, mode):
     rmsd = sqrt(somme / nb_pairs)
     return rmsd
 
+
+# -------------------------------------------------------------
+def computeRMSD(ref, frames, list_dom_prot, rmsd_mode, output):
+    """
+    Calcule le RMSD entre la structure de reference et chacune des conformations de la dynamique.
+    :param ref: Dictionnaire correspondant a la structure de reference.
+    :param frames: Dictionnaire correspondant aux differentes conformations.
+    :param list_dom_prot: Liste des domaines proteiques.
+    :param rmsd_mode: Mode de calcul du RMSD.
+    :param output: Fichier de sortie contenant pour chaque conformation, le RMSD global et celui des domaines.
+    :return: Graphes RMSD en fonction de conformations.
+    """
+    f = open(output, "w")
+
+    x_plot = []
+    y_global = []
+    y_dom = dict()  # cle = nom du domaine, valeur = liste des RMSD du domaine
+
+    for model in sorted(map(int, frames.keys())):   # pour chaque conformation on calcule le RMSD global et le RMSD de chaque domaine
+
+        rmsd_global = RMSD_prot(ref, frames[str(model)], rmsd_mode)
+
+        x_plot.append(model)
+        y_global.append(rmsd_global)
+        f.write("Model " + str(model) + "\t" + str(rmsd_global) + "\n")
+
+        for dom in list_dom_prot:
+            if dom not in y_dom.keys():
+                y_dom[dom] = []
+
+            rmsd_dom = RMSD_domain(ref[dom], frames[str(model)][dom], rmsd_mode)
+
+            y_dom[dom].append(rmsd_dom)
+
+            f.write("\t" + str(dom) + "\t" + str(rmsd_dom) + "\n")
+    f.close()
+
+    # Graphes:
+    plt.plot(x_plot, y_global)
+    plt.xlabel('Frame')
+    plt.ylabel('RMSD')
+    plt.title('Global RMSD of the protein')
+    plt.show()
+
+    # tracer les courbes des domaines sur le meme graphe:
+    colors = ['b', 'r', 'g', 'y', 'c', 'm', 'k']
+    for i in range(len(list_dom_prot)):
+        plt.plot(x_plot, y_dom[list_dom_prot[i]], colors[i], label=list_dom_prot[i])
+
+    plt.xlim(0, 5000)
+    plt.xlabel('Frame')
+    plt.ylabel('RMSD')
+    plt.title('RMSD for each domain')
+    plt.legend(loc=4)
+    plt.show()

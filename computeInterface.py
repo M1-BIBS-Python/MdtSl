@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 # -*- coding : utf8 -*-
 
+"""
+Authors: Maud De Tollenaere & Severine Liegeois
+Contact: de.tollenaere.maud@gmail.com & sliegeois@yahoo.fr
+Date: 02/05/2017
+Description: Script containing functions for computing distances and time of contacts 
+between residues of proteins.
+"""
+
 from RMSD import *
 
 import numpy as np
@@ -64,7 +72,7 @@ def distMatrix(dico, dom1, dom2, mode):
     plt.xlabel(dom2)     # le domaine 2 est represente par les colonnes (abscisse) de la matrice
     plt.ylabel(dom1)
     cb = plt.colorbar()  # ajout d'une echelle des couleurs
-    cb.set_label('Distance between residues (in Angstrom)') # titre de la legende
+    cb.set_label('Distance between residues of %s and %s\nin Angstrom'%(dom1,dom2)) # titre de la legende
     plt.show()
 
 
@@ -108,55 +116,60 @@ def resInterface(dico, prot_domains, rna_dom, threshold, mode, output, **writing
 
     # Optionnel: remet le dictionnaire modifie au format pdb, pour une visualisation dans PyMol
     if 'writePDB' in writing_param:
-        writePDBframes(dico, writing_param['writePDB'])
+        writePDBframes(dico, writing_param['writePDB'], prot_domains, rna_dom)
 
     # Retourne les frequences (si non nulles) dans un fichier texte:
     f = open(output, "w")
     res_interface = dict()
     for dom in inInterface.keys():
         res_interface[dom] = dict()
-        f.write("Domain " + dom + "\n")
+        f.write("Domain " + dom + "\n\tResidue\tFrequence\n")
         for res in inInterface[dom]['reslist']:
-            freq = (inInterface[dom][res] / len(dico.keys())) * 100
+            freq = inInterface[dom][res] / len(dico.keys())
             if freq != 0:
-                f.write("\tResidue " + res + " : " + str(freq) + " %\n")
+                f.write("\t" + res + "\t" + str(freq) + "\n")
                 res_interface[dom][res] = freq
     f.close()
 
     return res_interface
 
 
-def writePDBframes(dico, output):
+def writePDBframes(dico, output, list_dom_prot, rna_dom):
     """
     Utilise un dictionnaire contenant plusieurs conformations pour ecrire un fichier pdb visualisable sous PyMol.
     :param dico: Dictionnaire contenant les differentes conformations.
     :param output: Nom du fichier de sortie.
+    :param list_dom_prot: Liste des domaines proteiques.
+    :param rna_dom: Domaine correspondant a l'ARN.
     :return: Un fichier pdb au format ATOM.
     """
 
     fout = open(output, "w")
 
-    for model in dico.keys():
-        fout.write("MODEL\t" + str(model) + "\n")
-        for dom in ['A1', 'A2', 'A3', 'A4']:
-            for res in dico[model][dom]['reslist']:
-                for atom in dico[model][dom][res]['atomlist']:
-                    fout.write(
-                        "{:6s}{:5s} {:4s}{:1s}{:3s} {:1s}{:4s}{:1s}   {:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}       {:^4s}\n".format(
-                            "ATOM", dico[model][dom][res][atom]['id'], atom, '', dico[model][dom][res]['resname'],
-                            '', res, '', dico[model][dom][res][atom]['x'], dico[model][dom][res][atom]['y'],
-                            dico[model][dom][res][atom]['z'],
-                            1.00, dico[model][dom][res]['bfactor'], dom))
+    #for model in dico.keys():
+    model = "10"
+    fout.write("MODEL\t" + str(model) + "\n")
 
-        for nucl in dico[model]['B']['reslist']:
-            for atom in dico[model]['B'][nucl]['atomlist']:
+    for dom in list_dom_prot:
+        for res in dico[model][dom]['reslist']:
+            for atom in dico[model][dom][res]['atomlist']:
                 fout.write(
                     "{:6s}{:5s} {:4s}{:1s}{:3s} {:1s}{:4s}{:1s}   {:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}       {:^4s}\n".format(
-                        "ATOM", dico[model]['B'][nucl][atom]['id'], atom, '', dico[model]['B'][nucl]['resname'],
-                        '', nucl, '', dico[model]['B'][nucl][atom]['x'], dico[model]['B'][nucl][atom]['y'],
-                        dico[model]['B'][nucl][atom]['z'],
-                        1.00, 0.00, 'B'))
-        fout.write("ENDMDL\n")
+                        "ATOM", dico[model][dom][res][atom]['id'], atom, '', dico[model][dom][res]['resname'],
+                        '', res, '', dico[model][dom][res][atom]['x'], dico[model][dom][res][atom]['y'],
+                        dico[model][dom][res][atom]['z'],
+                        1.00, dico[model][dom][res]['bfactor'], dom))
+
+    for dom2 in rna_dom:
+        for nucl in dico[model][dom2]['reslist']:
+            for atom in dico[model][dom2][nucl]['atomlist']:
+                fout.write(
+                    "{:6s}{:5s} {:4s}{:1s}{:3s} {:1s}{:4s}{:1s}   {:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}       {:^4s}\n".format(
+                        "ATOM", dico[model][dom2][nucl][atom]['id'], atom, '', dico[model][dom2][nucl]['resname'],
+                        '', nucl, '', dico[model][dom2][nucl][atom]['x'], dico[model][dom2][nucl][atom]['y'],
+                        dico[model][dom2][nucl][atom]['z'],
+                        1.00, 0.00, dom2))
+    fout.write("ENDMDL\n")
     fout.close()
 
 
@@ -177,13 +190,13 @@ def contactTime(pairs, frames_dico, threshold, duration, mode, output):
     for res in pairs.keys():
         pairs[res]['contact time'] = 0      # nombre de conformations pour lesquelles les residus sont en contact
         for model in frames_dico.keys():
-            d = distDico(frames_dico[model][pairs[res]['dom']][res], frames_dico[model][pairs[res]['rna']][pairs[res]['nucl']], mode)
+            d = distDico(frames_dico[model][pairs[res]['dom1']][res], frames_dico[model][pairs[res]['dom2']][pairs[res]['res2']], mode)
             if d <= threshold:
                 pairs[res]['contact time'] += 1
 
         pairs[res]['contact time'] = pairs[res]['contact time']*duration/len(frames_dico.keys()) # duree de contact
 
-        f.write("Residue " + res + " - " + "Nucleotide " + pairs[res]['nucl'] + " : " +
+        f.write("Residue " + res + "(domain " + pairs[res]['dom1'] + ") - " + "Residue " + pairs[res]['res2'] + "(domain " + pairs[res]['dom2'] + ") : " +
                 str(pairs[res]['contact time']) + " ns\n")
 
     f.close()

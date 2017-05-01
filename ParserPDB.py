@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 # -*- coding : utf8 -*-
 
+"""
+Authors: Maud De Tollenaere & Severine Liegeois
+Contact: de.tollenaere.maud@gmail.com & sliegeois@yahoo.fr
+Date: 02/05/2017
+Description: Script containing functions useful for parsing PDB files (i.e. 3D structures of proteins).
+"""
+
 def PDBparser(pdbFile, list_dom):
     """
     Parse un fichier pdb au format ATOM en un dictionnaire utilisable par Python.

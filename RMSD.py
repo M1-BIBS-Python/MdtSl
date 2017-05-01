@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 # -*- coding : utf8 -*-
 
-import numpy as np
+"""
+Authors: Maud De Tollenaere & Severine Liegeois
+Contact: de.tollenaere.maud@gmail.com & sliegeois@yahoo.fr
+Date: 02/05/2017
+Description: Script containing functions for computing the RMSD between two superimposed proteins.
+"""
+
 import matplotlib.pyplot as plt
 from math import sqrt
 
@@ -135,8 +141,8 @@ def computeRMSD(ref, frames, list_dom_prot, rmsd_mode, output):
     # Graphes:
     plt.plot(x_plot, y_global)
     plt.xlabel('Frame')
-    plt.ylabel('RMSD')
-    plt.title('Global RMSD of the protein')
+    plt.ylabel('RMSD (in Angstrom)')
+    plt.title('Global RMSD of the protein (computed on %s)'%(rmsd_mode))
     plt.show()
 
     # tracer les courbes des domaines sur le meme graphe:
@@ -146,7 +152,7 @@ def computeRMSD(ref, frames, list_dom_prot, rmsd_mode, output):
 
     plt.xlim(0, 5000)
     plt.xlabel('Frame')
-    plt.ylabel('RMSD')
-    plt.title('RMSD for each domain')
+    plt.ylabel('RMSD (in Angstrom)')
+    plt.title('RMSD for each domain (computed on %s)'%(rmsd_mode))
     plt.legend(loc=4)
     plt.show()

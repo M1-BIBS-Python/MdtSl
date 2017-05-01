@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 # -*- coding : utf8 -*-
 
+"""
+Authors: Maud De Tollenaere & Severine Liegeois
+Contact: de.tollenaere.maud@gmail.com & sliegeois@yahoo.fr
+Date: 02/05/2017
+Description: A program that analyzes the sRNP H/ACA complex of the archea Pyroccocus abyssi.
+"""
+
 from ParserPDB import *
 from computeInterface import *
 import sys, os
@@ -22,7 +29,7 @@ def usage():
     -th     -> threshold to define a contact,in Ansgtrom (default = 9.0)
     
     -rmsd   -> if rmsd = 'CA', computes the RMSD between alpha carbons of two residues
-               and returns the smallest distance.
+               and returns it.
                if rmsd = 'CM', commputes the RMSD between the centers of mass of the two
                residues and returns it. (default = 'CM')
                    
@@ -90,19 +97,16 @@ except:
 
 try:
     threshold = float(sys.argv[sys.argv.index("-th")+1])
-    #print("The threshold used to define a contact is ", threshold)
 except:
     threshold = 9.0
 
 try:
     rmsd_mode = sys.argv[sys.argv.index("-rmsd")+1]
-    #print("The mode of calculation for the RMSD is ", rmsd_mode)
 except:
     rmsd_mode = "CM"
 
 try:
     dist_mode = sys.argv[sys.argv.index("-mode")+1]
-    #print("The mode of calculation for the distance is ", dist_mode)
 except:
     dist_mode = "CM"
 
@@ -169,10 +173,10 @@ else:
 # Calcul des temps de contact entre paires de residus choisis a partir de la Figure 2
 # ------------------------------------------------------------------------------------
 
-pairs = {'41': {'dom':'A4', 'nucl':'32', 'rna':'B'},
-         '100':{'dom':'A4', 'nucl':'31', 'rna':'B'},
-         '46': {'dom':'A4', 'nucl':'25', 'rna':'B'},
-         '34': {'dom':'A3', 'nucl':'33', 'rna':'B'}}
+pairs = {'41': {'dom1':'A4', 'res2':'32', 'dom2':'B'},
+         '100':{'dom1':'A4', 'res2':'31', 'dom2':'B'},
+         '46': {'dom1':'A4', 'res2':'25', 'dom2':'B'},
+         '34': {'dom1':'A3', 'res2':'33', 'dom2':'B'}}
 
 contact_output = input("Please, enter the name of the output file to store the durations\n of contact: ")
 contact_output = overwrite_file(contact_output)

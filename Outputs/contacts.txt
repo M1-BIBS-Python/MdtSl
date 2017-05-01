@@ -1,0 +1,8 @@
+Residue 41(domain A4) - Residue 32(domain B) : 10.0 ns
+Residue 100(domain A4) - Residue 31(domain B) : 10.0 ns
+Residue 46(domain A4) - Residue 25(domain B) : 9.88 ns
+Residue 34(domain A3) - Residue 33(domain B) : 0.0 ns
+Residue 6(domain A3) - Residue 63(domain A4) : 9.72 ns
+Residue 66(domain A4) - Residue 41(domain A3) : 6.8 ns
+Residue 98(domain A4) - Residue 30(domain B) : 9.7 ns
+Residue 26(domain A3) - Residue 65(domain A4) : 8.28 ns

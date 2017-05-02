@@ -15,6 +15,19 @@ import sys, os
 def usage():
     print ("""
     
+    This program allows you to analyze a molecular dynamics in PDB format.
+    
+    Inputs:  - a PDB file (ATOM format) containing the reference structure
+             - a PDB file (ATOM format) containing all the structures of the dynamics
+             
+    Outputs: - Root Mean Square Deviation (RMSD) for the whole structure or for particular domains
+             - Distance matrices between residues or domains
+             - Residues' frequency of belonging to an interface
+             - Duration of contact between key residues
+    
+    ==================================================================================
+                                      Arguments
+    
     obligatory:
     ===========
     
@@ -176,7 +189,11 @@ else:
 pairs = {'41': {'dom1':'A4', 'res2':'32', 'dom2':'B'},
          '100':{'dom1':'A4', 'res2':'31', 'dom2':'B'},
          '46': {'dom1':'A4', 'res2':'25', 'dom2':'B'},
-         '34': {'dom1':'A3', 'res2':'33', 'dom2':'B'}}
+         '34': {'dom1':'A3', 'res2':'33', 'dom2':'B'},
+         '6' : {'dom1':'A3', 'res2':'63', 'dom2':'A4'},
+         '66': {'dom1':'A4', 'res2':'41', 'dom2':'A3'},
+         '98': {'dom1':'A4', 'res2':'30', 'dom2':'B'},
+         '26': {'dom1':'A3', 'res2':'65', 'dom2':'A4'}}
 
 contact_output = input("Please, enter the name of the output file to store the durations\n of contact: ")
 contact_output = overwrite_file(contact_output)

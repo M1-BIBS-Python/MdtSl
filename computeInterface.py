@@ -147,28 +147,28 @@ def writePDBframes(dico, output, list_dom_prot, rna_dom):
     fout = open(output, "w")
 
     for model in dico.keys():
-    fout.write("MODEL\t" + str(model) + "\n")
+        fout.write("MODEL\t" + str(model) + "\n")
 
-    for dom in list_dom_prot:
-        for res in dico[model][dom]['reslist']:
-            for atom in dico[model][dom][res]['atomlist']:
-                fout.write(
-                    "{:6s}{:5s} {:4s}{:1s}{:3s} {:1s}{:4s}{:1s}   {:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}       {:^4s}\n".format(
-                        "ATOM", dico[model][dom][res][atom]['id'], atom, '', dico[model][dom][res]['resname'],
-                        '', res, '', dico[model][dom][res][atom]['x'], dico[model][dom][res][atom]['y'],
-                        dico[model][dom][res][atom]['z'],
-                        1.00, dico[model][dom][res]['bfactor'], dom))
+        for dom in list_dom_prot:
+            for res in dico[model][dom]['reslist']:
+                for atom in dico[model][dom][res]['atomlist']:
+                    fout.write(
+                        "{:6s}{:5s} {:4s}{:1s}{:3s} {:1s}{:4s}{:1s}   {:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}       {:^4s}\n".format(
+                            "ATOM", dico[model][dom][res][atom]['id'], atom, '', dico[model][dom][res]['resname'],
+                            '', res, '', dico[model][dom][res][atom]['x'], dico[model][dom][res][atom]['y'],
+                            dico[model][dom][res][atom]['z'],
+                            1.00, dico[model][dom][res]['bfactor'], dom))
 
-    for dom2 in rna_dom:
-        for nucl in dico[model][dom2]['reslist']:
-            for atom in dico[model][dom2][nucl]['atomlist']:
-                fout.write(
-                    "{:6s}{:5s} {:4s}{:1s}{:3s} {:1s}{:4s}{:1s}   {:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}       {:^4s}\n".format(
-                        "ATOM", dico[model][dom2][nucl][atom]['id'], atom, '', dico[model][dom2][nucl]['resname'],
-                        '', nucl, '', dico[model][dom2][nucl][atom]['x'], dico[model][dom2][nucl][atom]['y'],
-                        dico[model][dom2][nucl][atom]['z'],
-                        1.00, 0.00, dom2))
-    fout.write("ENDMDL\n")
+        for dom2 in rna_dom:
+            for nucl in dico[model][dom2]['reslist']:
+                for atom in dico[model][dom2][nucl]['atomlist']:
+                    fout.write(
+                        "{:6s}{:5s} {:4s}{:1s}{:3s} {:1s}{:4s}{:1s}   {:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}       {:^4s}\n".format(
+                            "ATOM", dico[model][dom2][nucl][atom]['id'], atom, '', dico[model][dom2][nucl]['resname'],
+                            '', nucl, '', dico[model][dom2][nucl][atom]['x'], dico[model][dom2][nucl][atom]['y'],
+                            dico[model][dom2][nucl][atom]['z'],
+                            1.00, 0.00, dom2))
+        fout.write("ENDMDL\n")
     fout.close()
 
 

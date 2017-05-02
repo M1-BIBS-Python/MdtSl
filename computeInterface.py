@@ -146,8 +146,7 @@ def writePDBframes(dico, output, list_dom_prot, rna_dom):
 
     fout = open(output, "w")
 
-    #for model in dico.keys():
-    model = "10"
+    for model in dico.keys():
     fout.write("MODEL\t" + str(model) + "\n")
 
     for dom in list_dom_prot:
